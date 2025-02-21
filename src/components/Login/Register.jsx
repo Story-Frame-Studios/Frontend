@@ -17,35 +17,42 @@ export const Register = () => {
   } = useForm();
 
   const onSubmit = async (data) => {
+    console.log("Submitting Data:", data);
+
     try {
-      const response = await fetch("http://localhost:8080/auth/register", {
-        method: "POST",
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email: data.email,
-          password: data.password,
-          firstName: data.firstName,
-          lastName: data.lastName,
-          role: data.role
-        })
-      });
+        const response = await fetch("http://localhost:4000/story/auth/register", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                email: data.email,
+                password: data.password,
+                firstName: data.firstName,
+                lastName: data.lastName,
+                role: data.role
+            })
+        });
 
-      const result = await response.json();
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || `HTTP error! Status: ${response.status}`);
+        }
 
-      if (result.success) {
-        localStorage.setItem("usertoken", result.token);
-        localStorage.setItem("user", JSON.stringify(result.user));
-        setLoginData({ token: result.token, user: result.user });
-        toast.success("Registration successful");
-        navigate('/dashboard');
-      } else {
-        toast.error(result.error || "Registration failed");
-      }
+        const result = await response.json();
+        if (result.success) {
+         
+          setLoginData({ token: result.token, user: result.user });
+          toast.success("Registration successful");
+          navigate('/dashboard');
+        } else {
+          toast.error(result.error || "Registration failed");
+        }
+
     } catch (err) {
-      toast.error("An error occurred during registration");
-      console.error(err);
+        console.error("Fetch error:", err);
+        toast.error(err.message || "An error occurred during registration");
     }
-  };
+};
+
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">

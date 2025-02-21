@@ -15,13 +15,13 @@ import App from './App';
 import { BrowserRouter } from 'react-router-dom'
 import { LoginContext } from './components/ContextProvider/LoginContext';
 import { ToastContainer, toast } from 'react-toastify';
-import { makeServer } from "./mocks/server"
+// import { makeServer } from "./mocks/server"
 
 import './index.css'
 
-if (process.env.NODE_ENV === "development") {
-  makeServer()
-}
+// if (process.env.NODE_ENV === "development") {
+//   makeServer()
+// }
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
