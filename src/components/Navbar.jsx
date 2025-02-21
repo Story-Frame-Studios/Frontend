@@ -12,6 +12,7 @@ export const Navbar = () => {
 
   const handleLogout = () => {
     logout();
+    // TODO: make JWT call to backend to logout if needed
     navigate('/login');
   };
 
@@ -39,8 +40,12 @@ export const Navbar = () => {
               
               {loginData?.token ? (
                 <>
+                  
                   <Link to="/dashboard" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md">
                     Dashboard
+                  </Link>
+                  <Link to="/account-settings" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md">
+                    Account Settings
                   </Link>
                   <div className="flex items-center space-x-3">
                     <span className="text-gray-700">
@@ -104,6 +109,13 @@ export const Navbar = () => {
                     onClick={toggleMenu}
                   >
                     Dashboard
+                  </Link>
+                  <Link
+                    to="/account-settings"
+                    className="block px-3 py-2 rounded-md text-gray-700 hover:text-gray-900 hover:bg-gray-100"
+                    onClick={toggleMenu}
+                  >
+                    Account Settings
                   </Link>
                   <div className="px-3 py-2">
                     <span className="block text-gray-700 mb-2">

@@ -13,6 +13,7 @@ import { Register } from './components/Login/Register';
 import { ForgotPassword } from './components/Login/ForgotPassword';
 import { Dashboard } from './pages/Dashboard';
 import { Footer } from './components/Footer';
+import { UserProfile } from './components/UserProfile/UserProfile';
 
 // Protected Route Component
 const ProtectedRoute = () => {
@@ -53,6 +54,9 @@ function App() {
             <Route element={<ProtectedRoute />}>
               <Route path="/dashboard" element={<Dashboard />} />
             </Route>
+            
+            {/* New route */}
+            <Route path="/account-settings" element={<UserProfile />} />
             
             {/* Catch all route */}
             <Route path="*" element={<Navigate to="/" replace />} />
