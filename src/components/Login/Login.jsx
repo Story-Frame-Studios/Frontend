@@ -18,7 +18,7 @@ export const Login = () => {
 
   const onSubmit = async (data) => {
     try {
-      const response = await fetch("http://localhost:8080/auth/login", {
+      const response = await fetch("http://localhost:4000/story/auth/login", {
         method: "POST",
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -28,6 +28,8 @@ export const Login = () => {
       });
 
       const result = await response.json();
+      toast.success("Login successful");
+    
 
       if (result.success) {
         localStorage.setItem("usertoken", result.token);
