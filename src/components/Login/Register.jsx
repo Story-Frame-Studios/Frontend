@@ -40,9 +40,8 @@ export const Register = () => {
         const result = await response.json();
         if (result.success) {
          
-          setLoginData({ token: result.token, user: result.user });
           toast.success("Registration successful");
-          navigate('/dashboard');
+          navigate('/login');
         } else {
           toast.error(result.error || "Registration failed");
         }

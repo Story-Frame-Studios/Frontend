@@ -28,8 +28,7 @@ export const Login = () => {
       });
 
       const result = await response.json();
-      toast.success("Login successful");
-    
+    console.log(result, "resulttt");
 
       if (result.success) {
         localStorage.setItem("usertoken", result.token);
