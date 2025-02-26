@@ -34,9 +34,9 @@ export const Navbar = () => {
 
             {/* Desktop Navigation */}
             <div className="hidden sm:flex sm:items-center sm:space-x-8">
-              <Link to="/" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md">
+              {/* <Link to="/" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md">
                 Home
-              </Link>
+              </Link> */}
               
               {loginData?.token ? (
                 <>
@@ -44,6 +44,11 @@ export const Navbar = () => {
                   <Link to="/dashboard" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md">
                     Dashboard
                   </Link>
+                  {loginData.user?.role === 'employer' && (
+                    <Link to="/jobs" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md">
+                      Jobs
+                    </Link>
+                  )}
                   <Link to="/account-settings" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md">
                     Account Settings
                   </Link>

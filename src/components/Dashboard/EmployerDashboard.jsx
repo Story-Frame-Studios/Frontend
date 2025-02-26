@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 const EmployerDashboard = () => {
   const [activeTab, setActiveTab] = useState('posted');
@@ -43,9 +44,6 @@ const EmployerDashboard = () => {
           <div>
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-xl font-semibold">Posted Jobs</h2>
-              <button className="bg-blue-500 text-white px-4 py-2 rounded-lg">
-                Post New Job
-              </button>
             </div>
             <div className="space-y-4">
               {/* Sample job listings */}
