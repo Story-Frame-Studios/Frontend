@@ -14,14 +14,46 @@ import { ForgotPassword } from './components/Login/ForgotPassword';
 import { Dashboard } from './pages/Dashboard';
 import { Footer } from './components/Footer';
 import { UserProfile } from './components/UserProfile/UserProfile';
+import JobsList from './components/Jobs/JobsList';
+import JobForm from './components/Jobs/JobForm';
+import JobDetails from './components/Jobs/JobDetails';
 
 // Protected Route Component
+
+
 const ProtectedRoute = () => {
   const { loginData, loading } = useContext(LoginContext);
   
   if (loading) return null;
+  // console.log(loginData);
+  
   
   return loginData?.token ? <Outlet /> : <Navigate to="/login" />;
+};
+
+const CandidateRoute = () => {
+  const { loginData, loading } = useContext(LoginContext);
+  
+  if (loading) return null;
+
+  if (loginData?.token && loginData?.user?.role === 'candidate') {
+    return <Outlet />;
+  } else {
+    return <Navigate to="/login" />;
+  }  
+};
+
+const EmployerRoute = () => {
+  const { loginData, loading } = useContext(LoginContext);
+  
+  if (loading) return null;
+  
+
+  if (loginData?.token && loginData?.user?.role === 'employer') {
+    return <Outlet />;
+  } else {
+    return <Navigate to="/login" />;
+  }  
 };
 
 // Public Route Component (prevents authenticated users from accessing login/register)
@@ -53,10 +85,19 @@ function App() {
             {/* Protected routes */}
             <Route element={<ProtectedRoute />}>
               <Route path="/dashboard" element={<Dashboard />} />
+              {/* New route */}
+              <Route path="/account-settings" element={<UserProfile />} />
+            
+            </Route>
+
+            <Route element={<EmployerRoute />}>
+
+              <Route path="/jobs" element={<JobsList />} />
+              <Route path="/jobs/new" element={<JobForm />} />
+              <Route path="/jobs/:id" element={<JobDetails />} />
+              <Route path="/jobs/edit/:id" element={<JobForm />} />
             </Route>
             
-            {/* New route */}
-            <Route path="/account-settings" element={<UserProfile />} />
             
             {/* Catch all route */}
             <Route path="*" element={<Navigate to="/" replace />} />
