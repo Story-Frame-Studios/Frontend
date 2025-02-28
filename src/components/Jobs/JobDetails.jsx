@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Card, Descriptions, Button, Space, message } from 'antd';
+import jobService from '../../services/jobService';
 
 const JobDetails = () => {
   const { id } = useParams();
@@ -14,22 +15,10 @@ const JobDetails = () => {
   const fetchJobDetails = async () => {
     setLoading(true);
     try {
-      // Simulate API call
-      const jobData = {
-        id: '1',
-        title: 'Senior React Developer',
-        description: 'We are looking for a senior React developer...',
-        requirements: '5+ years of experience with React...',
-        salary: 120000,
-        location: 'New York',
-        jobType: 'Full-time',
-        status: 'active',
-        createdAt: '2024-03-20',
-        applications: [],
-      };
-      setJob(jobData);
+      const response = await jobService.getJobById(id);
+      setJob(response.data);
     } catch (error) {
-      message.error('Failed to fetch job details');
+      message.error('Failed to fetch job details: ' + error.message);
     } finally {
       setLoading(false);
     }
@@ -44,7 +33,7 @@ const JobDetails = () => {
         loading={loading}
         extra={
           <Space>
-            <Link to={`/jobs/edit/${id}`}>
+            <Link to={`/jobs/edit/${job.jobId}`}>
               <Button type="primary">Edit</Button>
             </Link>
             <Link to="/jobs">
@@ -54,6 +43,9 @@ const JobDetails = () => {
         }
       >
         <Descriptions column={1}>
+          <Descriptions.Item label="Company Name">
+            {job.companyName}
+          </Descriptions.Item>
           <Descriptions.Item label="Description">
             {job.description}
           </Descriptions.Item>
@@ -61,7 +53,7 @@ const JobDetails = () => {
             {job.requirements}
           </Descriptions.Item>
           <Descriptions.Item label="Salary">
-            ${job.salary.toLocaleString()}
+            ${job.salary?.toLocaleString() || 'Not specified'}
           </Descriptions.Item>
           <Descriptions.Item label="Location">
             {job.location}
@@ -69,19 +61,8 @@ const JobDetails = () => {
           <Descriptions.Item label="Job Type">
             {job.jobType}
           </Descriptions.Item>
-          <Descriptions.Item label="Status">
-            <span style={{ 
-              color: job.status === 'active' ? 'green' : 'red',
-              textTransform: 'capitalize'
-            }}>
-              {job.status}
-            </span>
-          </Descriptions.Item>
-          <Descriptions.Item label="Posted On">
-            {new Date(job.createdAt).toLocaleDateString()}
-          </Descriptions.Item>
           <Descriptions.Item label="Applications">
-            {job.applications.length}
+            {job.applications?.length || 0} applications received
           </Descriptions.Item>
         </Descriptions>
       </Card>

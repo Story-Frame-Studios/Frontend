@@ -1,34 +1,21 @@
-import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Table, Button, Space, message, Modal } from 'antd';
 import { EditOutlined, DeleteOutlined, EyeOutlined } from '@ant-design/icons';
+import jobService from '../../services/jobService';
+import { useState, useEffect } from 'react';
 
 const JobsList = () => {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(false);
   const [jobToDelete, setJobToDelete] = useState(null);
 
-  // Sample data - replace with actual API call
   const fetchJobs = async () => {
     setLoading(true);
     try {
-      // Simulate API call
-      const sampleJobs = [
-        {
-          id: '1',
-          title: 'Senior React Developer',
-          location: 'New York',
-          salary: 120000,
-          jobType: 'Full-time',
-          status: 'active',
-          createdAt: '2024-03-20',
-        },
-        // Add more sample jobs as needed
-      ];
-      
-      setJobs(sampleJobs);
+      const response = await jobService.getAllJobs();
+      setJobs(response.data || []);
     } catch (error) {
-      message.error('Failed to fetch jobs');
+      message.error('Failed to fetch jobs: ' + error.message);
     } finally {
       setLoading(false);
     }
@@ -46,11 +33,11 @@ const JobsList = () => {
     if (!jobToDelete) return;
 
     try {
-      // Simulate API call
-      setJobs(jobs.filter(job => job.id !== jobToDelete.id));
+      await jobService.deleteJob(jobToDelete.jobId);
       message.success('Job deleted successfully');
+      fetchJobs(); // Refresh the list
     } catch (error) {
-      message.error('Failed to delete job');
+      message.error('Failed to delete job: ' + error.message);
     } finally {
       setJobToDelete(null);
     }
@@ -67,6 +54,11 @@ const JobsList = () => {
       key: 'title',
     },
     {
+      title: 'Company',
+      dataIndex: 'companyName',
+      key: 'companyName',
+    },
+    {
       title: 'Location',
       dataIndex: 'location',
       key: 'location',
@@ -75,7 +67,7 @@ const JobsList = () => {
       title: 'Salary',
       dataIndex: 'salary',
       key: 'salary',
-      render: (salary) => `$${salary.toLocaleString()}`,
+      render: (salary) => `$${salary?.toLocaleString() || 'Not specified'}`,
     },
     {
       title: 'Job Type',
@@ -83,27 +75,20 @@ const JobsList = () => {
       key: 'jobType',
     },
     {
-      title: 'Status',
-      dataIndex: 'status',
-      key: 'status',
-      render: (status) => (
-        <span style={{ 
-          color: status === 'active' ? 'green' : 'red',
-          textTransform: 'capitalize'
-        }}>
-          {status}
-        </span>
-      ),
+      title: 'Applications',
+      dataIndex: 'applications',
+      key: 'applications',
+      render: (applications) => applications?.length || 0,
     },
     {
       title: 'Actions',
       key: 'actions',
       render: (_, record) => (
         <Space>
-          <Link to={`/jobs/${record.id}`}>
+          <Link to={`/jobs/${record.jobId}`}>
             <Button icon={<EyeOutlined />} />
           </Link>
-          <Link to={`/jobs/edit/${record.id}`}>
+          <Link to={`/jobs/edit/${record.jobId}`}>
             <Button icon={<EditOutlined />} />
           </Link>
           <Button 
@@ -128,7 +113,7 @@ const JobsList = () => {
         columns={columns} 
         dataSource={jobs} 
         loading={loading}
-        rowKey="id"
+        rowKey="jobId"
       />
 
       <Modal

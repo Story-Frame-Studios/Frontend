@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import { LoginContext } from '../ContextProvider/LoginContext';
 import { Mail, Lock } from 'lucide-react';
+import { baseUrl } from '../Utils/constants';
 
 export const Login = () => {
   const { setLoginData } = useContext(LoginContext);
@@ -18,7 +19,7 @@ export const Login = () => {
 
   const onSubmit = async (data) => {
     try {
-      const response = await fetch("http://localhost:4000/story/auth/login", {
+      const response = await fetch(`${baseUrl}/auth/login`, {
         method: "POST",
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
