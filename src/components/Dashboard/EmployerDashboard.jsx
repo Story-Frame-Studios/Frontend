@@ -1,124 +1,68 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useState } from "react";
+import { FaBriefcase, FaUsers, FaEye, FaClipboardList } from "react-icons/fa";
+import { motion } from "framer-motion";
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 
 const EmployerDashboard = () => {
-  const [activeTab, setActiveTab] = useState('posted');
-  
+  const [activeTab, setActiveTab] = useState("dashboard");
+
+  // Sample data for the chart
+  const data = [
+    { name: "Jobs", count: 7 },
+    { name: "Applicants", count: 123 },
+  ];
+
   return (
-    <div>
-      <div className="flex space-x-4 mb-6">
-        <button
-          className={`px-4 py-2 rounded-lg ${
-            activeTab === 'posted'
-              ? 'bg-blue-500 text-white'
-              : 'bg-gray-200 text-gray-700'
-          }`}
-          onClick={() => setActiveTab('posted')}
-        >
-          Posted Jobs
-        </button>
-        <button
-          className={`px-4 py-2 rounded-lg ${
-            activeTab === 'applications'
-              ? 'bg-blue-500 text-white'
-              : 'bg-gray-200 text-gray-700'
-          }`}
-          onClick={() => setActiveTab('applications')}
-        >
-          Applications
-        </button>
-        <button
-          className={`px-4 py-2 rounded-lg ${
-            activeTab === 'company'
-              ? 'bg-blue-500 text-white'
-              : 'bg-gray-200 text-gray-700'
-          }`}
-          onClick={() => setActiveTab('company')}
-        >
-          Company Profile
-        </button>
-      </div>
+    <div className="flex flex-col md:flex-row h-screen bg-gray-100">
 
-      <div className="bg-white rounded-lg shadow p-6">
-        {activeTab === 'posted' && (
-          <div>
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-semibold">Posted Jobs</h2>
-            </div>
-            <div className="space-y-4">
-              {/* Sample job listings */}
-              <div className="border rounded-lg p-4">
-                <h3 className="font-semibold">Senior React Developer</h3>
-                <p className="text-gray-600">Posted 2 days ago</p>
-                <p className="text-gray-600">Applications: 12</p>
-              </div>
-            </div>
-          </div>
-        )}
 
-        {activeTab === 'applications' && (
+      {/* Main Content */}
+      <main className="flex-1 p-4 md:p-8">
+        {/* Welcome Banner */}
+        <div className="flex flex-col md:flex-row items-center bg-blue-600 text-white p-6 rounded-lg shadow-lg">
           <div>
-            <h2 className="text-xl font-semibold mb-4">Job Applications</h2>
-            <div className="space-y-4">
-              {/* Sample applications */}
-              <div className="border rounded-lg p-4">
-                <div className="flex justify-between items-start">
-                  <div>
-                    <h3 className="font-semibold">John Smith</h3>
-                    <p className="text-gray-600">Applied for: Senior React Developer</p>
-                    <p className="text-gray-600">Experience: 5 years</p>
-                  </div>
-                  <div className="space-x-2">
-                    <button className="bg-green-500 text-white px-3 py-1 rounded">
-                      Accept
-                    </button>
-                    <button className="bg-red-500 text-white px-3 py-1 rounded">
-                      Reject
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <h1 className="text-xl md:text-2xl font-bold">Welcome Back, Employer!</h1>
+            <p className="text-gray-200">Manage your jobs and applicants efficiently.</p>
           </div>
-        )}
+        </div>
 
-        {activeTab === 'company' && (
-          <div>
-            <h2 className="text-xl font-semibold mb-4">Company Profile</h2>
-            <form className="space-y-4">
+        {/* Statistics Section */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-6">
+          {[
+            { icon: <FaBriefcase className="text-blue-500 text-3xl" />, label: "Total Jobs", value: "07" },
+            { icon: <FaUsers className="text-green-500 text-3xl" />, label: "Total Applicants", value: "123" },
+            { icon: <FaEye className="text-yellow-500 text-3xl" />, label: "Total Views", value: "1.7k" },
+            { icon: <FaClipboardList className="text-red-500 text-3xl" />, label: "Pending Reviews", value: "04" },
+          ].map((stat, index) => (
+            <motion.div
+              key={index}
+              whileHover={{ scale: 1.05 }}
+              className="p-6 bg-white rounded-lg shadow-md flex items-center space-x-4"
+            >
+              {stat.icon}
               <div>
-                <label className="block text-gray-700 mb-2">Company Name</label>
-                <input
-                  type="text"
-                  className="w-full border rounded-lg px-4 py-2"
-                  placeholder="Enter company name"
-                />
+                <h2 className="text-lg font-semibold">{stat.value}</h2>
+                <p className="text-gray-500">{stat.label}</p>
               </div>
-              <div>
-                <label className="block text-gray-700 mb-2">Industry</label>
-                <input
-                  type="text"
-                  className="w-full border rounded-lg px-4 py-2"
-                  placeholder="Enter industry"
-                />
-              </div>
-              <div>
-                <label className="block text-gray-700 mb-2">Description</label>
-                <textarea
-                  className="w-full border rounded-lg px-4 py-2"
-                  rows="4"
-                  placeholder="Enter company description"
-                ></textarea>
-              </div>
-              <button className="bg-blue-500 text-white px-4 py-2 rounded-lg">
-                Save Changes
-              </button>
-            </form>
-          </div>
-        )}
-      </div>
+            </motion.div>
+          ))}
+        </div>
+
+        {/* Chart Section */}
+        <div className="bg-white p-6 rounded-lg shadow-md mt-6">
+          <h2 className="text-xl font-semibold mb-4">Job Listings vs Applicants</h2>
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={data}>
+              <XAxis dataKey="name" />
+              <YAxis />
+              <Tooltip />
+              <Bar dataKey="count" fill="#4A90E2" barSize={50} />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </main>
     </div>
   );
 };
 
-export default EmployerDashboard; 
+export default EmployerDashboard;
