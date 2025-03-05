@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import { LoginContext } from '../ContextProvider/LoginContext';
 import { Mail, Lock, User } from 'lucide-react';
+import { baseUrl } from '../Utils/constants';
 
 export const Register = () => {
   const { setLoginData } = useContext(LoginContext);
@@ -20,7 +21,7 @@ export const Register = () => {
     console.log("Submitting Data:", data);
 
     try {
-        const response = await fetch("http://localhost:4000/story/auth/register", {
+        const response = await fetch(`${baseUrl}/auth/register`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({

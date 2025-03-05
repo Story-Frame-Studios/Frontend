@@ -1,8 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { Form, Input, InputNumber, Select, Button, message } from 'antd';
 import { useNavigate, useParams } from 'react-router-dom';
+import jobService from '../../services/jobService';
+import { LoginContext } from '../ContextProvider/LoginContext';
+
 
 const JobForm = () => {
+  const { loginData } = useContext(LoginContext);
+
+  const userId = loginData?.user?.id;
+  
   const [form] = Form.useForm();
   const navigate = useNavigate();
   const { id } = useParams();
@@ -19,34 +26,33 @@ const JobForm = () => {
   const fetchJobDetails = async () => {
     setLoading(true);
     try {
-      // Simulate API call
-      const jobData = {
-        id: '1',
-        title: 'Senior React Developer',
-        description: 'We are looking for a senior React developer...',
-        requirements: '5+ years of experience with React...',
-        salary: 120000,
-        location: 'New York',
-        jobType: 'Full-time',
-        status: 'active',
-      };
+      const response = await jobService.getJobById(id);
+      const jobData = response.data;
       form.setFieldsValue(jobData);
     } catch (error) {
-      message.error('Failed to fetch job details');
+      message.error('Failed to fetch job details: ' + error.message);
     } finally {
       setLoading(false);
     }
   };
 
   const onFinish = async (values) => {
+    const valuesWithEmpId = {
+      ...values,
+      employerId: userId
+    }
     setLoading(true);
     try {
-      // Simulate API call
-      console.log('Form values:', values);
-      message.success(`Job ${isEditing ? 'updated' : 'created'} successfully`);
+      if (isEditing) {
+        await jobService.updateJob(id, valuesWithEmpId);
+        message.success('Job updated successfully');
+      } else {
+        await jobService.createJob(valuesWithEmpId);
+        message.success('Job created successfully');
+      }
       navigate('/jobs');
     } catch (error) {
-      message.error(`Failed to ${isEditing ? 'update' : 'create'} job`);
+      message.error(`Failed to ${isEditing ? 'update' : 'create'} job: ${error.message}`);
     } finally {
       setLoading(false);
     }
@@ -72,6 +78,14 @@ const JobForm = () => {
         </Form.Item>
 
         <Form.Item
+          name="companyName"
+          label="Company Name"
+          rules={[{ required: true, message: 'Please enter company name' }]}
+        >
+          <Input />
+        </Form.Item>
+
+        <Form.Item
           name="description"
           label="Job Description"
           rules={[{ required: true, message: 'Please enter job description' }]}
@@ -82,6 +96,7 @@ const JobForm = () => {
         <Form.Item
           name="requirements"
           label="Requirements"
+          rules={[{ required: true, message: 'Please enter job requirements' }]}
         >
           <Input.TextArea rows={4} />
         </Form.Item>
@@ -112,22 +127,8 @@ const JobForm = () => {
           rules={[{ required: true, message: 'Please select job type' }]}
         >
           <Select>
-            <Select.Option value="Full-time">Full-time</Select.Option>
-            <Select.Option value="Part-time">Part-time</Select.Option>
-            <Select.Option value="Contract">Contract</Select.Option>
-            <Select.Option value="Internship">Internship</Select.Option>
-          </Select>
-        </Form.Item>
-
-        <Form.Item
-          name="status"
-          label="Status"
-          rules={[{ required: true, message: 'Please select status' }]}
-        >
-          <Select>
-            <Select.Option value="active">Active</Select.Option>
-            <Select.Option value="closed">Closed</Select.Option>
-            <Select.Option value="draft">Draft</Select.Option>
+            <Select.Option value="Full-Time">Full-time</Select.Option>
+            <Select.Option value="Part-Time">Part-time</Select.Option>
           </Select>
         </Form.Item>
 

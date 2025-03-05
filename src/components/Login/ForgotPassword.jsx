@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import { Link } from 'react-router-dom';
 import { Mail } from 'lucide-react';
+import { baseUrl } from '../Utils/constants';
 
 export const ForgotPassword = () => {
   const {
@@ -13,7 +14,10 @@ export const ForgotPassword = () => {
 
   const onSubmit = async (data) => {
     try {
-      const response = await fetch("http://localhost:8080/auth/forgot-password", {
+
+      
+      
+      const response = await fetch(`${baseUrl}/auth/forgot-password`, {
         method: "POST",
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
