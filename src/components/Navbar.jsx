@@ -2,7 +2,7 @@
 import { useContext } from 'react';
 import { Link, Outlet, useNavigate } from 'react-router-dom';
 import { LoginContext } from './ContextProvider/LoginContext';
-import { Menu, X, User } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 import { useState } from 'react';
 
 export const Navbar = () => {
@@ -48,6 +48,16 @@ export const Navbar = () => {
                     <Link to="/jobs" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md">
                       Jobs
                     </Link>
+                  )}
+                  {loginData.user?.role === 'candidate' && (
+                    <>
+                      <Link to="/job-opportunities" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md">
+                        Job Opportunities
+                      </Link>
+                      <Link to="/applications" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md">
+                        My Applications
+                      </Link>
+                    </>
                   )}
                   <Link to="/account-settings" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md">
                     Account Settings
@@ -115,6 +125,36 @@ export const Navbar = () => {
                   >
                     Dashboard
                   </Link>
+                  
+                  {loginData.user?.role === 'employer' && (
+                    <Link
+                      to="/jobs"
+                      className="block px-3 py-2 rounded-md text-gray-700 hover:text-gray-900 hover:bg-gray-100"
+                      onClick={toggleMenu}
+                    >
+                      Jobs
+                    </Link>
+                  )}
+                  
+                  {loginData.user?.role === 'candidate' && (
+                    <>
+                      <Link
+                        to="/job-opportunities"
+                        className="block px-3 py-2 rounded-md text-gray-700 hover:text-gray-900 hover:bg-gray-100"
+                        onClick={toggleMenu}
+                      >
+                        Job Opportunities
+                      </Link>
+                      <Link
+                        to="/applications"
+                        className="block px-3 py-2 rounded-md text-gray-700 hover:text-gray-900 hover:bg-gray-100"
+                        onClick={toggleMenu}
+                      >
+                        My Applications
+                      </Link>
+                    </>
+                  )}
+                  
                   <Link
                     to="/account-settings"
                     className="block px-3 py-2 rounded-md text-gray-700 hover:text-gray-900 hover:bg-gray-100"
