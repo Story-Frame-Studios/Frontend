@@ -30,7 +30,7 @@ const ApplicationsList = () => {
     }
   }, [loginData]);
 
-  const fetchApplications = async () => {
+  const fetchApplications = async () => {    
     setLoading(true);
     try {
       const response = await applicationService.getCandidateApplications(loginData.user.id);

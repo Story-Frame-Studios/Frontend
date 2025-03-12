@@ -53,30 +53,58 @@ const ApplicationForm = () => {
     }
   };
 
+  // const handleSubmit = async (values) => {
+  //   if (fileList.length === 0) {
+  //     message.error('Please upload your resume');
+  //     return;
+  //   }
+
+  //   setSubmitting(true);
+  //   try {
+  //     const resumeUrl = fileList[0].name;
+      
+  //     const applicationData = {
+  //       jobId: id,
+  //       candidateId: loginData.user.id,
+  //       resume: resumeUrl,
+  //       coverLetter: values.coverLetter,
+  //       status: 'received',
+  //       notes: '',
+  //       createdAt: new Date().toISOString()
+  //     };
+      
+  //     await applicationService.createApplication(applicationData);
+      
+  //     message.success('Application submitted successfully');
+  //     navigate('/applications');
+  //   } catch (error) {
+  //     message.error('Failed to submit application: ' + error.message);
+  //   } finally {
+  //     setSubmitting(false);
+  //   }
+  // };
+
+
   const handleSubmit = async (values) => {
     if (fileList.length === 0) {
       message.error('Please upload your resume');
       return;
     }
-
+  
     setSubmitting(true);
     try {
-      // In a real application, we would upload the file to a server
-      // and get back a URL. For this mock, we'll just use the file name.
-      const resumeUrl = fileList[0].name;
-      
       const applicationData = {
         jobId: id,
         candidateId: loginData.user.id,
-        resume: resumeUrl,
+        resume: fileList[0], // Use the actual File object
         coverLetter: values.coverLetter,
         status: 'received',
         notes: '',
         createdAt: new Date().toISOString()
       };
-      
+  
       await applicationService.createApplication(applicationData);
-      
+  
       message.success('Application submitted successfully');
       navigate('/applications');
     } catch (error) {
@@ -85,7 +113,7 @@ const ApplicationForm = () => {
       setSubmitting(false);
     }
   };
-
+  
   const uploadProps = {
     name: 'resume',
     multiple: false,
