@@ -34,7 +34,11 @@ const ApplicationsList = () => {
     setLoading(true);
     try {
       const response = await applicationService.getCandidateApplications(loginData.user.id);
-      setApplications(response.data.data || []);
+      console.log(response,"responeee")
+      if(response.success){
+        setApplications(response.applications || []);
+      }
+    
     } catch (error) {
       message.error('Failed to fetch applications: ' + error.message);
     } finally {
@@ -105,8 +109,9 @@ const ApplicationsList = () => {
       title: 'Actions',
       key: 'actions',
       render: (_, record) => (
+  
         <Space>
-          <Link to={`/applications/${record.id}`}>
+          <Link to={`/applications/${record.applicationId}`}>
             <Button icon={<EyeOutlined />} type="primary">View</Button>
           </Link>
           <Button 
@@ -121,14 +126,7 @@ const ApplicationsList = () => {
     },
   ];
 
-  // Mock data for job information
-  const enhancedApplications = applications.map(app => ({
-    ...app,
-    job: {
-      title: 'Software Developer', // This would come from the actual job data
-      companyName: 'Tech Company', // This would come from the actual job data
-    }
-  }));
+
 
   return (
     <div className="container mx-auto p-4">
@@ -138,7 +136,7 @@ const ApplicationsList = () => {
       
       <Table 
         columns={columns} 
-        dataSource={enhancedApplications} 
+        dataSource={applications} 
         loading={loading}
         rowKey="id"
       />

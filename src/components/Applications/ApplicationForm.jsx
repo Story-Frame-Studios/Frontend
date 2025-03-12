@@ -102,6 +102,7 @@ const ApplicationForm = () => {
         notes: '',
         createdAt: new Date().toISOString()
       };
+      console.log(applicationData,"applicationData")
   
       await applicationService.createApplication(applicationData);
   
