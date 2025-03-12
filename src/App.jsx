@@ -17,6 +17,10 @@ import { UserProfile } from './components/UserProfile/UserProfile';
 import JobsList from './components/Jobs/JobsList';
 import JobForm from './components/Jobs/JobForm';
 import JobDetails from './components/Jobs/JobDetails';
+import CandidateJobsList from './components/Jobs/CandidateJobsList';
+import ApplicationForm from './components/Applications/ApplicationForm';
+import ApplicationsList from './components/Applications/ApplicationsList';
+import ApplicationDetails from './components/Applications/ApplicationDetails';
 
 // Protected Route Component
 
@@ -90,14 +94,25 @@ function App() {
             
             </Route>
 
+            {/* Employer routes */}
             <Route element={<EmployerRoute />}>
-
               <Route path="/jobs" element={<JobsList />} />
               <Route path="/jobs/new" element={<JobForm />} />
               <Route path="/jobs/:id" element={<JobDetails />} />
               <Route path="/jobs/edit/:id" element={<JobForm />} />
             </Route>
             
+            {/* Candidate routes */}
+            <Route element={<CandidateRoute />}>
+              <Route path="/job-opportunities" element={<CandidateJobsList />} />
+              <Route path="/job/:id/application/new" element={<ApplicationForm />} />
+              <Route path="/applications" element={<ApplicationsList />} />
+              <Route path="/applications/:id" element={<ApplicationDetails />} />
+              <Route path="/applications/job/:jobId" element={<ApplicationsList />} />
+            </Route>
+            
+            {/* Job details can be viewed by both candidates and employers */}
+            <Route path="/job/:id" element={<JobDetails />} />
             
             {/* Catch all route */}
             <Route path="*" element={<Navigate to="/" replace />} />
