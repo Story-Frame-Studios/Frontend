@@ -10,9 +10,9 @@ const applicationService = {
   // Get all applications for a candidate
   // Get all applications for a candidate
   getCandidateApplications: async (candidateId) => {
-    const response = await axios.get(`${applicationRoute}/getApplicationsByCandidateId`, {
+    const response = await axios.post(`${applicationRoute}/getApplicationsByCandidateId`, {
       headers: { 'Content-Type': 'application/json' }, // Set headers explicitly
-      data: { candidateId },  // Force body in GET request
+      candidateId: candidateId ,  // Force body in GET request
     });
 
     return response.data;
@@ -20,7 +20,8 @@ const applicationService = {
 
   // Get application by ID
   getApplicationById: async (applicationId) => {
-    const response = await axios.get(`${applicationRoute}/${applicationId}`);
+    console.log(applicationId)
+    const response = await axios.get(`${applicationRoute}/getApplicationByApplicationId/${applicationId}`);
     return response.data;
   },
 
@@ -31,28 +32,33 @@ const applicationService = {
   },
 
   // Create new application
-  createApplication: async (applicationData) => {
+   createApplication: async (applicationData) => {
     const formData = new FormData();
     
-    // Add all application data to FormData
-    Object.keys(applicationData).forEach(key => {
-      // If it's a file object, add it directly
-      if (key === 'resume' && applicationData[key] instanceof File) {
-        formData.append('resume', applicationData[key]);
+    // Append all fields to FormData
+    Object.keys(applicationData).forEach((key) => {
+      if (key === "resume" && applicationData[key] instanceof File) {
+        formData.append("resume", applicationData[key]);
       } else {
-        formData.append(key, applicationData[key]);
+        // Convert non-string values to strings (e.g., objects, arrays)
+        formData.append(key, applicationData[key] instanceof Object ? JSON.stringify(applicationData[key]) : applicationData[key]);
       }
     });
-    
-    const response = await axios.post(`${applicationRoute}/addApplication`, formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data'
-      }
-    });
-    
-    return response.data;
+    console.log(formData,"formData")
+    try {
+      const response = await axios.post(`${applicationRoute}/addApplication`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+  
+      return response.data;
+    } catch (error) {
+      console.error("Error submitting application:", error);
+      throw error;
+    }
   },
-
+  
   // Update application status
   updateApplicationStatus: async (applicationId, status) => {
     const response = await axios.patch(`${applicationRoute}/${applicationId}/status`, { status });
