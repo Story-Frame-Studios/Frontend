@@ -8,6 +8,7 @@ import { baseUrl } from '../Utils/constants';
 import { Eye, EyeOff } from 'lucide-react';
 import Lottie from 'lottie-react';
 import animationData from '../../assets/Job-animation.json';
+import { Button } from '../ui/button';
 
 export const Login = () => {
   const { setLoginData } = useContext(LoginContext);
@@ -43,7 +44,7 @@ export const Login = () => {
         toast.success("Login successful");
         navigate('/dashboard');
       } else {
-        toast.error(result.error || "Login failed");
+        toast.error(result.message || "Login failed");
       }
     } catch (err) {
       toast.error("An error occurred during login");
@@ -101,7 +102,6 @@ export const Login = () => {
                   </div>
                 </div>
 
-
                 <div className="relative w-full">
                   <div
                     className={`absolute left-0 top-0 h-full w-1 transition-all ${isPasswordFocused ? "primary-bg" : "bg-transparent"
@@ -156,17 +156,13 @@ export const Login = () => {
               </div>
 
               <div>
+                <Button size="lg" type="submit" variant="blue"
+                  disabled={isSubmitting}> Sign In </Button>
 
-                <button type="submit"
-                  disabled={isSubmitting}
-                  className='my-4 px-6 py-2 rounded-l text-s font-semibold border-2 transition-all duration-300 ease-in-out text-white outline-blue-700 bg-blue-700 hover:bg-white hover:text-black hover:outline-blue-700  focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:bg-blue-300'
-                >Sign In</button>
-
-                <button
-                  className='my-4 px-6 py-2 rounded-l text-s font-semibold border-2 transition-all duration-300 ease-in-out text-blue-700 bg-white hover:bg-blue-700 hover:text-white hover:outline-blue-700  focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:bg-blue-300'
+                <Button variant="blueOutline" size="lg"
                 > <Link to="/signup">
                     Sign up
-                  </Link></button>
+                  </Link></Button>
               </div>
 
             </form>

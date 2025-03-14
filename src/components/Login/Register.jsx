@@ -286,6 +286,7 @@ export const Register = () => {
                                             onFocus={() => setIsConfirmPasswordFocused(true)}
                                             onBlur={() => setIsConfirmPasswordFocused(false)}
                                         />
+                                        
 
                                         {/* Eye Icon for Toggling Password Visibility */}
                                         <button
@@ -297,6 +298,9 @@ export const Register = () => {
                                         </button>
                                     </div>
                                 </div>
+                                    {errors.confirmPassword && (
+                                        <p className="text-sm text-red-600">{errors.confirmPassword.message}</p>
+                                    )}
 
                                 {/* role field */}
                                 <div className="relative w-full">

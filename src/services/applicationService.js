@@ -67,7 +67,7 @@ const applicationService = {
 
   // Delete/withdraw application
   deleteApplication: async (applicationId) => {
-    const response = await axios.delete(`${applicationRoute}/${applicationId}`);
+    const response = await axios.delete(`${applicationRoute}/deleteApplication/${applicationId}`);
     return response.data;
   }
 };
