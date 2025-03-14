@@ -1,12 +1,15 @@
 // pages/Home.jsx
 import { Link } from 'react-router-dom';
 import { Search, Briefcase, Users, Building2, ArrowRight } from 'lucide-react';
+import { Button } from '../components/ui/button';
+import Lottie from 'lottie-react';
+import animationData from '../assets/Job-animation2.json';
 
 export const Home = () => {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-20">
+      <section className="bg-gradient-to-r  py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
             <div>
@@ -17,28 +20,14 @@ export const Home = () => {
                 Connect with top employers and discover opportunities that match your skills and aspirations.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
-                <Link
-                  to="/signup"
-                  className="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 text-center"
-                >
-                  Get Started
-                </Link>
-                <Link
-                  to="/jobs"
-                  className="bg-blue-700 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-600 text-center"
-                >
-                  Browse Jobs
-                </Link>
+                <Button variant="blue">Get Started</Button>
+                <Button variant="blueOutline">Browse Jobs</Button>
+                
               </div>
             </div>
             <div className="hidden md:block">
               {/* Replace with actual undraw illustration */}
-              <img
-                // src/assets/illustrations/undraw_job-hunt_5umi.svg
-                src="/src/assets/illustrations/undraw_job-hunt_5umi.svg"
-                alt="Job Search Illustration"
-                className="w-full"
-              />
+              <Lottie animationData={animationData} />
             </div>
           </div>
         </div>

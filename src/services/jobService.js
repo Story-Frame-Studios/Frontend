@@ -76,7 +76,7 @@ const jobService = {
   deleteJob: async (jobId) => {
     try {
       // Real implementation with axios
-      const response = await axios.delete(`${jobPostingRoute}/current-job/${jobId}`);
+      const response = await axios.delete(`${jobPostingRoute}/delete-job/${jobId}`);
       return response.data;
     } catch (error) {
       throw error.response?.data || error.message;

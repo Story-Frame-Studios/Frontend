@@ -52,11 +52,10 @@ const ApplicationsList = () => {
 
   const handleDeleteConfirm = async () => {
     if (!applicationToDelete) return;
-
     try {
-      await applicationService.deleteApplication(applicationToDelete.id);
+      await applicationService.deleteApplication(applicationToDelete.applicationId);
       message.success('Application withdrawn successfully');
-      fetchApplications(); // Refresh the list
+      await fetchApplications(); // Refresh the list
     } catch (error) {
       message.error('Failed to withdraw application: ' + error.message);
     } finally {

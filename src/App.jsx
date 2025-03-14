@@ -21,6 +21,7 @@ import CandidateJobsList from './components/Jobs/CandidateJobsList';
 import ApplicationForm from './components/Applications/ApplicationForm';
 import ApplicationsList from './components/Applications/ApplicationsList';
 import ApplicationDetails from './components/Applications/ApplicationDetails';
+import PageNotFound from './pages/PageNotFound';
 
 // Protected Route Component
 
@@ -115,7 +116,7 @@ function App() {
             <Route path="/job/:id" element={<JobDetails />} />
             
             {/* Catch all route */}
-            <Route path="*" element={<Navigate to="/" replace />} />
+            <Route path="*" element={<PageNotFound/>} />
           </Route>
         </Routes>
         <Footer />
