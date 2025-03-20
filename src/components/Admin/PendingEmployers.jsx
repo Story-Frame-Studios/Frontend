@@ -35,13 +35,11 @@ const PendingEmployers = () => {
 
   const handleVerification = async (email, action) => {
     try {
-      const response = await fetch(`${baseUrl}/auth/verify-employer`, {
-        method: 'POST',
+      const response = await fetch(`${baseUrl}/auth/verify-employer?email=${email}&action=${action}`, {
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${loginData.token}`
-        },
-        body: JSON.stringify({ email, action })
+          'Authorization': `Bearer ${loginData.token}`,
+          'Content-Type': 'application/json'
+        }
       });
 
       const data = await response.json();
