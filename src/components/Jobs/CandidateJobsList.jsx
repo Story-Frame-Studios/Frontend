@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Card, Button, Row, Col, Pagination, Spin, Empty, Tag, message, Select, Input, Slider, Divider } from 'antd';
 import { SearchOutlined, FilterOutlined } from '@ant-design/icons';
 import { LoginContext } from '../ContextProvider/LoginContext';
-import jobService from '../../services/jobService';
+import jobService from '../../services/jobService'
 import applicationService from '../../services/applicationService';
 
 const { Meta } = Card;
@@ -19,7 +19,8 @@ const CandidateJobsList = () => {
   const [totalJobs, setTotalJobs] = useState(0);
   const [pageSize, setPageSize] = useState(6);
   const [applicationStatus, setApplicationStatus] = useState({});
-  
+  const [messageApi, contextHolder] = message.useMessage();
+
   // Filter and search states
   const [jobType, setJobType] = useState('All');
   const [salaryRange, setSalaryRange] = useState([0, 200000]);
@@ -97,24 +98,38 @@ const CandidateJobsList = () => {
 
   const fetchJobs = async () => {
     setLoading(true);
+    const key = "loading"; 
+
+    // Show loading message
+    messageApi.open({ key, type: "loading", content: "Loading Jobs data For You..." });
+
+    // Ensure loading message appears before API call
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
     try {
-      const response = await jobService.getAllJobs();
-      const jobs = response.data || [];
-      setAllJobs(jobs);
-      
-      // Initial filtering and pagination
-      const initialFiltered = applyFiltersAndSearch(jobs);
-      setFilteredJobs(initialFiltered);
-      setTotalJobs(initialFiltered.length);
-      
-      const initialPaginated = applyPagination(initialFiltered);
-      setDisplayedJobs(initialPaginated);
+        const response = await jobService.getAllJobs();
+        console.log(response);
+        
+        const jobs = response.data || [];
+        setAllJobs(jobs);
+        
+        // Initial filtering and pagination
+        const initialFiltered = applyFiltersAndSearch(jobs);
+        setFilteredJobs(initialFiltered);
+        setTotalJobs(initialFiltered.length);
+        
+        const initialPaginated = applyPagination(initialFiltered);
+        setDisplayedJobs(initialPaginated);
+
+        // Update message to success
+        messageApi.open({ key, type: 'success', content: 'Jobs loaded successfully!', duration: 2 });
     } catch (error) {
-      message.error('Failed to fetch jobs: ' + error.message);
+        // Update message to error
+        messageApi.open({ key, type: 'error', content: 'Failed to load jobs: ' + error.message, duration: 2 });
     } finally {
-      setLoading(false);
+        setLoading(false);
     }
-  };
+};
 
   const applyFiltersAndSearch = (jobs = allJobs) => {
     let result = [...jobs];
@@ -231,8 +246,13 @@ const CandidateJobsList = () => {
     return `$${value.toLocaleString()}`;
   };
 
+  const handleCardClick = (jobId) => {
+    navigate(`/job/${jobId}`);
+  };
+
   return (
     <div className="container mx-auto p-4">
+      {contextHolder}
       <h1 className="text-2xl font-bold mb-6">Available Job Opportunities</h1>
       
       {/* Search Bar - Top Section */}
@@ -331,9 +351,10 @@ const CandidateJobsList = () => {
                     <Card
                       hoverable
                       className="h-full flex flex-col"
+                      onClick={() => handleCardClick(job.jobId)}
                       actions={[
                         applicationStatus[job.jobId] ? (
-                          <Link to={`/applications/job/${job.jobId}`}>
+                          <Link to={`/applications/getJobDetails/${job.jobId}`}>
                             <Button type="default">View Application</Button>
                           </Link>
                         ) : (
@@ -379,4 +400,4 @@ const CandidateJobsList = () => {
   );
 };
 
-export default CandidateJobsList; 
+export default CandidateJobsList;

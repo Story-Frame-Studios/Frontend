@@ -59,7 +59,7 @@ export const Navbar = () => {
                       <Link to="/job-opportunities" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md">
                         Job Opportunities
                       </Link>
-                      <Link to="/applications" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md">
+                      <Link to="/myApplications" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md">
                         My Applications
                       </Link>
                     </>

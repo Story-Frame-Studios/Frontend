@@ -7,7 +7,7 @@ import { mockJobs } from './mockData';
 // const API_BASE_URL = process.env.API_BASE_URL;
 // router.get('/all-jobs', getJobs); 
 // router.post('/post-job', addJob); 
-// router.get('/current-job/:id', getJob); 
+// router.get('/getJobDetails/:id', getJob); 
 // router.delete('/delete-job/:id', deleteJob); 
 // router.put('/update-job/:id', updateJob);
 
@@ -19,11 +19,27 @@ const jobService = {
   // Get all jobs
   getAllJobs: async () => {
     try {
-      // Real implementation with axios
+      // Real implementation with axios    
       const response = await axios.get(`${jobPostingRoute}/all-jobs`);
+      
       return response.data;
     } catch (error) {
-      console.error('Error fetching jobs from API, falling back to mock data:', error);
+      console.error('Error fetching jobs from AP  I, falling back to mock data:', error);
+      // Fallback to mock data if API call fails
+      return {
+        data: mockJobs
+      };
+    }
+  },
+  getJobsByEmployerId: async (employerId) => {
+    try {
+      // Real implementation with axios    
+      const response = await axios.get(`${jobPostingRoute}/getJobsByEmployerId/${employerId}`);
+      return {
+        data: response.data.jobs
+      };
+    } catch (error) {
+      console.error('Error fetching jobs from AP  I, falling back to mock data:', error);
       // Fallback to mock data if API call fails
       return {
         data: mockJobs
@@ -32,10 +48,10 @@ const jobService = {
   },
 
   // Get single job by ID
-  getJobById: async (jobId) => {
+  getJobDetails: async (jobId) => {
     try {
       // Real implementation with axios
-      const response = await axios.get(`${jobPostingRoute}/current-job/${jobId}`);
+      const response = await axios.get(`${jobPostingRoute}/getJobDetails/${jobId}`);      
       return response.data;
     } catch (error) {
       console.error('Error fetching job details from API, falling back to mock data:', error);
@@ -81,7 +97,22 @@ const jobService = {
     } catch (error) {
       throw error.response?.data || error.message;
     }
-  }
+  },
+  getDeletedJobsByEmployerId: async (employerId) => {
+    try {
+      // Real implementation with axios    
+      const response = await axios.get(`${jobPostingRoute}/getDeletedJobPostings/${employerId}`);
+      return {
+        data: response.data.deletedJobPosting
+      };
+    } catch (error) {
+      console.error('Error fetching jobs from AP  I, falling back to mock data:', error);
+      // Fallback to mock data if API call fails
+      return {
+        data: mockJobs
+      };
+    }
+  },
 };
 
 export default jobService; 
