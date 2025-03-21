@@ -51,9 +51,13 @@ export const Navbar = () => {
               {loginData?.token ? (
                 <>
 
-                  <Link to="/dashboard" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md">
+{loginData.user.role==='employer'?   <Link
+                    to="/dashboard"
+                    className="block px-3 py-2 rounded-md text-gray-700 hover:text-gray-900 hover:bg-gray-100"
+                    onClick={toggleMenu}
+                  >
                     Dashboard
-                  </Link>
+                  </Link>:null}
                   {loginData.user?.role === 'candidate' && (
                     <>
                       <Link to="/job-opportunities" className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md">
@@ -143,13 +147,13 @@ export const Navbar = () => {
 
               {loginData?.token ? (
                 <>
-                  <Link
+               {loginData.user.role==='employer'?   <Link
                     to="/dashboard"
                     className="block px-3 py-2 rounded-md text-gray-700 hover:text-gray-900 hover:bg-gray-100"
                     onClick={toggleMenu}
                   >
                     Dashboard
-                  </Link>
+                  </Link>:null}
                   <Link
                     to="/account-settings"
                     className="block px-3 py-2 rounded-md text-gray-700 hover:text-gray-900 hover:bg-gray-100"

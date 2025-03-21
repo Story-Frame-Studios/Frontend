@@ -20,9 +20,12 @@ export const Home = () => {
                 Connect with top employers and discover opportunities that match your skills and aspirations.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
+              <Link
+            to="/dashboard"
+            className="inline-flex items-center bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100"
+          >
                 <Button variant="blue">Get Started</Button>
-                <Button variant="blueOutline">Browse Jobs</Button>
-                
+                </Link>
               </div>
             </div>
             <div className="hidden md:block">

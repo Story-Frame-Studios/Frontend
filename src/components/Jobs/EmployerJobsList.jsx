@@ -75,6 +75,7 @@ const EmployerJobList = () => {
   };
 
   const applyFilters = () => {
+    console.log("innnnnn", selectedSalaryRange)
     // Filter active jobs
     let filteredActiveJobs = jobs;
     if (searchTerm) {
@@ -161,7 +162,8 @@ const EmployerJobList = () => {
     setFilterJobType(value);
   };
 
-  const handleSalaryRangeChange = (value) => {   
+  const handleSalaryRangeChange = (value) => {
+    console.log(value, "clalall")
     setSelectedSalaryRange(value === undefined ? "" : value); // Set to empty string if value is undefined
   };
 
@@ -173,7 +175,7 @@ const EmployerJobList = () => {
       title: 'Salary',
       dataIndex: 'salary',
       key: 'salary',
-      render: (salary) => `$${salary?.toLocaleString() || 'Not specified'}` 
+      render: (salary) => `$${salary?.toLocaleString() || 'Not specified'}`
     },
     { title: 'Job Type', dataIndex: 'jobType', key: 'jobType' },
     {
@@ -222,35 +224,36 @@ const EmployerJobList = () => {
       </div>
 
       <div className="mb-4">
-        <Input.Search 
+        <Input.Search
           placeholder="Search jobs by title or company"
           onChange={(e) => handleSearch(e.target.value)}  // Live search
           enterButton
           allowClear
           style={{ width: 300, marginRight: 16 }}
         />
-        <Select 
-          placeholder="Filter by job type" 
-          value={filterJobType} 
-          onChange={handleJobTypeFilter} 
+        <Select
+          placeholder="Filter by job type"
+          value={filterJobType}
+          onChange={handleJobTypeFilter}
           style={{ width: 150, marginRight: 16 }}
         >
           <Option value="">All Job Types</Option>
           <Option value="Full-Time">Full-Time</Option>
           <Option value="Part-Time">Part-Time</Option>
         </Select>
-        <Select 
-          placeholder="Filter by salary range" 
-          value={selectedSalaryRange||''} 
-          onChange={handleSalaryRangeChange} 
+        <Select
+          placeholder="Filter by salary range"
+          value={selectedSalaryRange ? JSON.stringify(selectedSalaryRange) : ""}
+          onChange={(value) => handleSalaryRangeChange(value ? JSON.parse(value) : null)}
           style={{ width: 200, marginRight: 16 }}
         >
           <Option value="">All Salaries</Option>
-          <Option value={[0, 50000]}>0 - 50000</Option>
-          <Option value={[50000, 100000]}>50000 - 100000</Option>
-          <Option value={[100000, 150000]}>100000 - 150000</Option>
-          <Option value={[150000, Infinity]}>150000+</Option>
+          <Option value={JSON.stringify([0, 50000])}>0 - 50000</Option>
+          <Option value={JSON.stringify([50000, 100000])}>50000 - 100000</Option>
+          <Option value={JSON.stringify([100000, 150000])}>100000 - 150000</Option>
+          <Option value={JSON.stringify([150000, Infinity])}>150000+</Option>
         </Select>
+
       </div>
 
       <Card className="mb-6 shadow-md">

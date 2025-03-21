@@ -1,7 +1,8 @@
 import { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { LoginContext } from '../components/ContextProvider/LoginContext';
-
+import EmployerDashboard from '@/components/Dashboard/EmployerDashboard';
+import CandidateJobsList from '@/components/Jobs/CandidateJobsList';
 export const Dashboard = () => {
   const { loginData } = useContext(LoginContext);
   const userRole = loginData?.user?.role;
@@ -21,8 +22,11 @@ export const Dashboard = () => {
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-2xl font-bold mb-6">Dashboard</h1>
-      {userRole === 'admin' && renderAdminDashboard()}
-      {/* {userRole === 'admin' ? <DashboardLayout /> : <DashboardLayout />} */}
+      {loginData?.user?.role === 'employer' ? (
+        <EmployerDashboard />
+      ) : (
+        <CandidateJobsList />
+      )}
     </div>
   );
 };
