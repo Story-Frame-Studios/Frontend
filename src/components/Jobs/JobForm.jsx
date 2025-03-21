@@ -26,7 +26,7 @@ const JobForm = () => {
   const fetchJobDetails = async () => {
     setLoading(true);
     try {
-      const response = await jobService.getJobById(id);
+      const response = await jobService.getJobDetails(id);
       const jobData = response.data;
       form.setFieldsValue(jobData);
     } catch (error) {

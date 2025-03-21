@@ -26,7 +26,7 @@ export const LoginProvider = ({ children }) => {
 
   return (
     <LoginContext.Provider value={{ loginData, setLoginData, logout, loading }}>
-      {!loading && children}
+      {!loading ? children : null}
     </LoginContext.Provider>
   );
 };
