@@ -25,6 +25,10 @@ import PageNotFound from './pages/PageNotFound';
 import Applicants from './components/Applications/Applicants';
 import AllApplicationListForEmployer from './components/Applications/AllApplicantionListForEmployer';
 import ApplicationDetailsforEmployer from './components/Applications/ApplicationDetailsForEmployer';
+import PendingEmployers from './components/Admin/PendingEmployers';
+import { AboutUs } from './pages/AboutUs';
+import { ContactUs } from './pages/ContactUs';
+
 // Protected Route Component
 
 
@@ -72,6 +76,19 @@ const PublicRoute = () => {
   return !loginData?.token ? <Outlet /> : <Navigate to="/dashboard" />;
 };
 
+// Add this new route protection component
+const AdminRoute = () => {
+  const { loginData, loading } = useContext(LoginContext);
+  
+  if (loading) return null;
+
+  if (loginData?.token && loginData?.user?.role === 'admin') {
+    return <Outlet />;
+  } else {
+    return <Navigate to="/login" />;
+  }  
+};
+
 function App() {
   return (
     <LoginProvider>
@@ -81,6 +98,9 @@ function App() {
           <Route element={<Navbar />}>
             {/* Public routes */}
             <Route path="/" element={<Home />} />
+            <Route path="/about" element={<AboutUs />} />
+            <Route path="/contact" element={<ContactUs />} />
+            
             {/* Auth routes */}
             <Route element={<PublicRoute />}>
               <Route path="/login" element={<Login />} />
@@ -118,7 +138,13 @@ function App() {
             </Route>
 
             {/* Job details can be viewed by both candidates and employers */}
-
+            <Route path="/job/:id" element={<JobDetails />} />
+            
+            {/* Admin routes */}
+            <Route element={<AdminRoute />}>
+              <Route path="/admin/pending-employers" element={<PendingEmployers />} />
+            </Route>
+            
             {/* Catch all route */}
             <Route path="*" element={<PageNotFound />} />
           </Route>
