@@ -36,6 +36,7 @@ const ApplicationDetailsforEmployer = () => {
   const { loginData } = useContext(LoginContext);
   const [application, setApplication] = useState(null);
   const [job, setJob] = useState(null);
+  const [candidate, setCandidate] = useState(null); // Add state for candidate details
   const [loading, setLoading] = useState(false);
   const [applicationToUpdate, setApplicationToUpdate] = useState(null);
   const [selectedStatus, setSelectedStatus] = useState("");
@@ -59,6 +60,7 @@ const ApplicationDetailsforEmployer = () => {
       if (response.success) {
         setApplication(response.application);
         setJob(response.job);
+        setCandidate(response.candidate); // Set candidate details
         setSelectedStatus(response.application.status);
         console.log(response);
       } else {
@@ -110,8 +112,8 @@ const ApplicationDetailsforEmployer = () => {
     );
   }
 
-  if (!application || !job) return null;
-console.log(application,"application")
+  if (!application || !job || !candidate) return null; // Ensure candidate details are present
+
   return (
     <div className="container mx-auto p-4">
       <Card
@@ -141,13 +143,13 @@ console.log(application,"application")
           className="mt-6"
         >
           <Descriptions.Item label="First Name">
-            {application.firstName}
+            {candidate.firstName}
           </Descriptions.Item>
           <Descriptions.Item label="Last Name">
-            {application.lastName}
+            {candidate.lastName}
           </Descriptions.Item>
           <Descriptions.Item label="Email">
-            {application.email}
+            {candidate.email}
           </Descriptions.Item>
           <Descriptions.Item label="Status">
             <Tag color={getStatusColor(application.status)}>

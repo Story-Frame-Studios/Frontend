@@ -23,8 +23,6 @@ export const Register = () => {
     const { setLoginData } = useContext(LoginContext);
     const navigate = useNavigate();
 
-
-
     const {
         register,
         handleSubmit,
@@ -53,7 +51,6 @@ export const Register = () => {
 
             const result = await response.json();
             if (result.success) {
-
                 setLoginData({ token: result.token, user: result.user });
                 toast.success("Registration successful");
                 navigate('/dashboard');
@@ -68,33 +65,30 @@ export const Register = () => {
     };
 
     return (
-        <>
+        <div className="min-h-screen px-12 py-12 flex items-center justify-center primary-bg">
+            <div className="md:w-2/3 w-full flex space-y-8 bg-white rounded-lg shadow-md">
 
-            {/* Register Page */}
+                {/* image half */}
+                <div className="md:w-1/2 w-full m-auto p-12 md:flex md:flex-col md:items-center hidden overflow-hidden">
+                    <Lottie animationData={animationData} />
+                </div>
 
-            <div className="min-h-screen px-12 py-12 flex items-center justify-center primary-bg">
-                <div className="md:w-2/3 w-full  flex space-y-8 bg-white rounded-lg shadow-md">
+                {/* form half */}
+                <div className="md:w-1/2 w-full flex flex-col justify-center h-full p-8 ">
+                    <h3 className="mt-6 font-normal secondary-text text-3xl">
+                        Hello,
+                    </h3>
+                    <h1 className='text-5xl font-bold secondary-text'>
+                        Create Account!
+                    </h1>
 
-                    {/* image half */}
-                    <div className="md:w-1/2 w-full  m-auto p-12 md:flex md:flex-col md:items-center hidden overflow-hidden">
-                        <Lottie animationData={animationData} />
-                    </div>
+                    <form className="mt-8 space-y-6" onSubmit={handleSubmit(onSubmit)}>
 
-                    {/* form half */}
-                    <div className="md:w-1/2 w-full flex flex-col justify-center h-full p-8 ">
-                        <h3 className="mt-6 font-normal secondary-text text-3xl">
-                            Hello,
-                        </h3>
-                        <h1 className='text-5xl font-bold secondary-text'>
-                            Create Account!
-                        </h1>
+                        <div className="rounded-md space-y-4">
 
-                        <form className="mt-8 space-y-6" onSubmit={handleSubmit(onSubmit)}>
-
-                            <div className="rounded-md space-y-4">
-
-                                {/* first name and last name field */}
-                                <div className='grid grid-cols-2 gap-4'>
+                            {/* first name and last name field */}
+                            <div className='grid grid-cols-2 gap-4'>
+                                <div>
                                     <div className="relative">
                                         {/* Left Side Bar */}
                                         <div
@@ -109,7 +103,7 @@ export const Register = () => {
                                                 className={`absolute left-3 top-2 text-gray-500 text-sm transition-all ${isFirstNameFocused ? "text-xs -top-2 text-blue-500" : "text-sm"
                                                     }`}
                                             >
-                                                First Name
+                                                First Name *
                                             </label>
 
                                             {/* Input Field */}
@@ -123,15 +117,22 @@ export const Register = () => {
                                                     minLength: {
                                                         value: 2,
                                                         message: "First name must be at least 2 characters"
+                                                    },
+                                                    pattern: {
+                                                        value: /^[A-Za-z]+$/,
+                                                        message: "First name cannot contain numbers"
                                                     }
                                                 })}
-
                                                 onFocus={() => setIsFirstNameFocused(true)}
                                                 onBlur={() => setIsFirstNameFocused(false)}
                                             />
-
                                         </div>
                                     </div>
+                                    {errors.firstName && (
+                                        <p className="text-sm text-red-600">{errors.firstName.message}</p>
+                                    )}
+                                </div>
+                                <div>
                                     <div className="relative">
                                         {/* Left Side Bar */}
                                         <div
@@ -146,7 +147,7 @@ export const Register = () => {
                                                 className={`absolute left-3 top-2 text-gray-500 text-sm transition-all ${isLastNameFocused ? "text-xs -top-2 text-blue-500" : "text-sm"
                                                     }`}
                                             >
-                                                Last Name
+                                                Last Name *
                                             </label>
 
                                             {/* Input Field */}
@@ -160,17 +161,25 @@ export const Register = () => {
                                                     minLength: {
                                                         value: 2,
                                                         message: "Last name must be at least 2 characters"
+                                                    },
+                                                    pattern: {
+                                                        value: /^[A-Za-z]+$/,
+                                                        message: "Last name cannot contain numbers"
                                                     }
                                                 })}
                                                 onFocus={() => setIsLastNameFocused(true)}
                                                 onBlur={() => setIsLastNameFocused(false)}
                                             />
-
                                         </div>
                                     </div>
+                                    {errors.lastName && (
+                                        <p className="text-sm text-red-600">{errors.lastName.message}</p>
+                                    )}
                                 </div>
+                            </div>
 
-                                {/* email id field */}
+                            {/* email id field */}
+                            <div>
                                 <div className="relative w-full">
                                     {/* Left Side Bar */}
                                     <div
@@ -185,7 +194,7 @@ export const Register = () => {
                                             className={`absolute left-3 top-2 text-gray-500 text-sm transition-all ${isEmailFocused ? "text-xs -top-2 text-blue-500" : "text-sm"
                                                 }`}
                                         >
-                                            Email Address
+                                            Email Address *
                                         </label>
 
                                         {/* Input Field */}
@@ -204,11 +213,17 @@ export const Register = () => {
                                             onFocus={() => setIsEmailFocused(true)}
                                             onBlur={() => setIsEmailFocused(false)}
                                         />
-
                                     </div>
                                 </div>
+                                <div>
+                                    {errors.email && (
+                                        <p className="text-sm text-red-600">{errors.email.message}</p>
+                                    )}
+                                </div>
+                            </div>
 
-                                {/* password and confirm password field */}
+                            {/* password and confirm password field */}
+                            <div>
                                 <div className="relative w-full">
                                     <div
                                         className={`absolute left-0 top-0 h-full w-1 transition-all ${isPasswordFocused ? "primary-bg" : "bg-transparent"
@@ -222,7 +237,7 @@ export const Register = () => {
                                             className={`absolute left-3 top-2 text-gray-500 text-sm transition-all ${isPasswordFocused ? "text-xs -top-2 text-blue-500" : "text-sm"
                                                 }`}
                                         >
-                                            Password
+                                            Password *
                                         </label>
 
                                         {/* Input Field */}
@@ -245,18 +260,25 @@ export const Register = () => {
                                             onFocus={() => setIsPasswordFocused(true)}
                                             onBlur={() => setIsPasswordFocused(false)}
                                         />
-
                                         {/* Eye Icon for Toggling Password Visibility */}
                                         <button
                                             type="button"
                                             className="absolute right-3 top-1/2 transform -translate-y-1/2 h-full text-gray-500 hover:text-gray-700"
                                             onClick={() => setShowPassword(!showPassword)}
                                         >
-                                            {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                                            {showPassword ?  <Eye size={20} /> :<EyeOff size={20} />}
                                         </button>
                                     </div>
                                 </div>
+                                <div>
+                                    {errors.password && (
+                                        <p className="text-sm text-red-600">{errors.password.message}</p>
+                                    )}
+                                </div>
+                            </div>
 
+                            {/* confirm password field */}
+                            <div>
                                 <div className="relative w-full">
                                     <div
                                         className={`absolute left-0 top-0 h-full w-1 transition-all ${isConfirmPasswordFocused ? "primary-bg" : "bg-transparent"
@@ -270,7 +292,7 @@ export const Register = () => {
                                             className={`absolute left-3 top-2 text-gray-500 text-sm transition-all ${isConfirmPasswordFocused ? "text-xs -top-2 text-blue-500" : "text-sm"
                                                 }`}
                                         >
-                                            Confirm Password
+                                            Confirm Password *
                                         </label>
 
                                         {/* Input Field */}
@@ -286,26 +308,28 @@ export const Register = () => {
                                             onFocus={() => setIsConfirmPasswordFocused(true)}
                                             onBlur={() => setIsConfirmPasswordFocused(false)}
                                         />
-                                        
-
                                         {/* Eye Icon for Toggling Password Visibility */}
                                         <button
                                             type="button"
                                             className="absolute right-3 top-1/2 transform -translate-y-1/2 h-full text-gray-500 hover:text-gray-700"
                                             onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                                         >
-                                            {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                                            {showConfirmPassword ? <Eye size={20} /> : <EyeOff size={20} />}
                                         </button>
                                     </div>
                                 </div>
+                                <div>
                                     {errors.confirmPassword && (
                                         <p className="text-sm text-red-600">{errors.confirmPassword.message}</p>
                                     )}
+                                </div>
+                            </div>
 
+                            <div>
                                 {/* role field */}
                                 <div className="relative w-full">
                                     <label htmlFor="role" className="block text-sm font-medium text-gray-700">
-                                        Role
+                                        Role *
                                     </label>
                                     <select
                                         id="role"
@@ -319,30 +343,29 @@ export const Register = () => {
                                         <option value="employer">Employer</option>
                                     </select>
                                     {errors.role && (
-                                        <p className="mt-1 text-sm text-red-600">{errors.role.message}</p>
+                                        <div>
+                                            <p className="mt-1 text-sm text-red-600">{errors.role.message}</p>
+                                        </div>
                                     )}
                                 </div>
-
-                                <button type="submit"
-                                    disabled={isSubmitting}
-                                    className='my-4 px-6 py-2 rounded-l text-s font-semibold border-2 transition-all duration-300 ease-in-out text-white outline-blue-700 bg-blue-700 hover:bg-white hover:text-black hover:outline-blue-700  focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:bg-blue-300'
-                                >Sign up</button>
-
-                                <button
-                                    className='my-4 px-6 py-2 rounded-l text-s font-semibold border-2 transition-all duration-300 ease-in-out text-blue-700 bg-white hover:bg-blue-700 hover:text-white hover:outline-blue-700  focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:bg-blue-300'
-                                > <Link to="/login">
-                                        Sign in
-                                    </Link></button>
                             </div>
 
+                            <button type="submit"
+                                disabled={isSubmitting}
+                                className='my-4 px-6 py-2 rounded-l text-s font-semibold border-2 transition-all duration-300 ease-in-out text-white outline-blue-700 bg-blue-700 hover:bg-white hover:text-black hover:outline-blue-700  focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:bg-blue-300'
+                            >Sign up</button>
 
-                        </form>
-                    </div>
+                            <button
+                                className='my-4 px-6 py-2 rounded-l text-s font-semibold border-2 transition-all duration-300 ease-in-out text-blue-700 bg-white hover:bg-blue-700 hover:text-white hover:outline-blue-700  focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:bg-blue-300'
+                            > <Link to="/login">
+                                    Sign in
+                                </Link></button>
+                        </div>
 
+                    </form>
                 </div>
+
             </div>
-
-        </>
-
+        </div>
     );
 };

@@ -68,7 +68,7 @@ export const ForgotPassword = () => {
                     className={`absolute left-3 top-2 text-gray-500 text-sm transition-all ${isEmailFocused ? "text-xs -top-2 text-blue-500" : "text-sm"
                       }`}
                   >
-                    Email Address
+                    Email Address *
                   </label>
 
                   {/* Input Field */}
@@ -90,6 +90,11 @@ export const ForgotPassword = () => {
 
                 </div>
               </div>
+              {errors.email && (
+                    <div>
+                      <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
+                    </div>
+                  )}
             </div>
 
             <div>

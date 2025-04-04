@@ -22,7 +22,7 @@ export const Home = () => {
               <div className="flex flex-col sm:flex-row gap-4">
               <Link
             to="/dashboard"
-            className="inline-flex items-center bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100"
+            className="inline-flex items-center bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold"
           >
                 <Button variant="blue">Get Started</Button>
                 </Link>

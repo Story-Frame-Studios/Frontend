@@ -18,12 +18,24 @@ const getStatusColor = (status) => {
   return statusColors[status] || 'default';
 };
 
+const isValidUrl = (string) => {
+  const pattern = new RegExp(
+    '^(https?:\\/\\/)'+ // protocol
+    '(([A-Z0-9](?:[A-Z0-9-]*[A-Z0-9])?\\.)+[A-Z0-9](?:[A-Z0-9-]*[A-Z0-9])?' + // domain...
+    '|((\\d{1,3}\\.){3}\\d{1,3}))'+ // ...or ipv4
+    '(\\:\\d+)?(\\/[-A-Z0-9+&@#/%=~_|$,;]*[A-Z0-9+&@#/%=~_|$])?'+ // port and path
+    '(\\?[;&A-Z0-9+_=%]*)?'+ // query string
+    '(\\#[-A-Z0-9_]*)?$','i' // fragment locator
+  );
+  return !!pattern.test(string);
+};
+
 const ApplicationDetails = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const { loginData } = useContext(LoginContext);
   const [application, setApplication] = useState(null);
-  const [job, setJob] = useState(null);  // New state for job details
+  const [job, setJob] = useState(null);
   const [loading, setLoading] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
@@ -34,9 +46,7 @@ const ApplicationDetails = () => {
       return;
     }
 
-    // Fetch application and job details when the page loads
     fetchApplicationDetails();
-
   }, [id, loginData]);
 
   const fetchApplicationDetails = async () => {
@@ -45,9 +55,17 @@ const ApplicationDetails = () => {
     await new Promise(resolve => setTimeout(resolve, 500));  // Simulating delay for UX
     try {
       const response = await applicationService.getApplicationById(id);
+
       if (response.success) {
+        // Ensure the logged-in user is the one who created this application
+        if (response.application.userId !== loginData.userId) {
+          messageApi.open({ key: 'loading', type: 'error', content: 'You are not authorized to view this application.', duration: 2 });
+          navigate('/myApplications');
+          return;
+        }
+
         setApplication(response.application);
-        setJob(response.job);  // Set the job details from the response
+        setJob(response.job);
         messageApi.open({ key: 'loading', type: 'success', content: 'Application details loaded successfully!', duration: 2 });
       }
     } catch (error) {
@@ -140,8 +158,18 @@ const ApplicationDetails = () => {
               </a>
             </Space>
           </Descriptions.Item>
+
+          {/* Conditional Rendering for Cover Letter */}
           <Descriptions.Item label="Cover Letter">
-            <div className="whitespace-pre-wrap">{application.coverLetter}</div>
+            {
+              application.coverLetter.includes('http') ? (
+                <a href={application.coverLetter} target="_blank" rel="noopener noreferrer">
+                  View Cover Letter
+                </a>
+              ) : (
+                <div className="whitespace-pre-wrap">{application.coverLetter}</div>
+              )
+            }
           </Descriptions.Item>
         </Descriptions>
       </Card>

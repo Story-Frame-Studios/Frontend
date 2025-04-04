@@ -179,12 +179,6 @@ const EmployerJobList = () => {
     },
     { title: 'Job Type', dataIndex: 'jobType', key: 'jobType' },
     {
-      title: 'Applications',
-      dataIndex: 'applications',
-      key: 'applications',
-      render: (applications) => applications?.length || 0
-    },
-    {
       title: 'Actions',
       key: 'actions',
       render: (_, record) => (

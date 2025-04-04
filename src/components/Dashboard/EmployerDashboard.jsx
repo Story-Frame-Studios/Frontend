@@ -112,6 +112,7 @@ const EmployerDashboard = () => {
               icon: <FaClipboardList className="text-red-500 text-3xl" />,
               label: "Pending Reviews",
               value: `${receivedApplications.length}`,
+              onClick: () => navigate("/allAppliedApplications", { state: { applications } }),
             },
           ].map((stat, index) => (
             <motion.div

@@ -25,7 +25,7 @@ const applicationService = {
 
   // Check if candidate has applied to a job
   checkApplicationExists: async (jobId, candidateId) => {
-    const response = await axios.get(`${applicationRoute}/check/${jobId}/${candidateId}`);
+    const response = await axios.get(`${applicationRoute}/getApplicationStatus/${jobId}/${candidateId}`);
     return response.data;
   },
 

@@ -1,4 +1,5 @@
-import { useState, useContext } from 'react';
+// UserProfile.js
+import { useState, useContext, useEffect } from 'react';
 import { LoginContext } from '../ContextProvider/LoginContext';
 import { toast } from 'react-toastify';
 
@@ -7,9 +8,9 @@ export const UserProfile = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const [formData, setFormData] = useState({
-    firstName: loginData.user?.firstName || '',
-    lastName: loginData.user?.lastName || '',
-    email: loginData.user?.email || '',
+    firstName: loginData?.user?.firstName || '',
+    lastName: loginData?.user?.lastName || '',
+    email: loginData?.user?.email || '',
     currentPassword: '',
     newPassword: '',
     confirmPassword: '',
@@ -23,6 +24,19 @@ export const UserProfile = () => {
     newPassword: '',
     confirmPassword: '',
   });
+
+  useEffect(() => {
+    if (loginData?.user) {
+      setFormData({
+        firstName: loginData.user.firstName,
+        lastName: loginData.user.lastName,
+        email: loginData.user.email,
+        currentPassword: '',
+        newPassword: '',
+        confirmPassword: '',
+      });
+    }
+  }, [loginData]);
 
   const validateField = (name, value) => {
     let error = '';
@@ -72,54 +86,61 @@ export const UserProfile = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
 
     const error = validateField(name, value);
-    setErrors(prev => ({
+    setErrors((prev) => ({
       ...prev,
-      [name]: error
+      [name]: error,
     }));
   };
 
   const validateForm = () => {
     const newErrors = {};
-    Object.keys(formData).forEach(key => {
+    Object.keys(formData).forEach((key) => {
       newErrors[key] = validateField(key, formData[key]);
     });
     setErrors(newErrors);
-    return !Object.values(newErrors).some(error => error !== '');
+    return !Object.values(newErrors).some((error) => error !== '');
   };
 
   const handleProfileUpdate = async (e) => {
+    console.log("evveenen")
+    console.log(loginData?.token,"tookemnenenen");
     e.preventDefault();
-    
+
     // Validate only profile fields
     const profileFields = ['firstName', 'lastName', 'email'];
+    console.log(profileFields);
+    
     const profileErrors = {};
-    profileFields.forEach(field => {
+    profileFields.forEach((field) => {
       profileErrors[field] = validateField(field, formData[field]);
     });
-    
-    if (Object.values(profileErrors).some(error => error !== '')) {
-      setErrors(prev => ({ ...prev, ...profileErrors }));
+
+    if (Object.values(profileErrors).some((error) => error !== '')) {
+      setErrors((prev) => ({ ...prev, ...profileErrors }));
       return;
     }
 
     setIsLoading(true);
+   
+    
     try {
-      const response = await fetch('/api/users/update-profile', {
+      const response = await fetch('http://localhost:4000/storyframestudio/auth/update-profile', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${loginData.token}`,
+          Authorization: `Bearer ${loginData?.token}`, // Send token in Authorization header
         },
         body: JSON.stringify({
           firstName: formData.firstName,
           lastName: formData.lastName,
           email: formData.email,
+          token:loginData?.token
         }),
       });
 
@@ -148,30 +169,31 @@ export const UserProfile = () => {
 
   const handlePasswordUpdate = async (e) => {
     e.preventDefault();
-    
+
     // Validate password fields
     const passwordFields = ['currentPassword', 'newPassword', 'confirmPassword'];
     const passwordErrors = {};
-    passwordFields.forEach(field => {
+    passwordFields.forEach((field) => {
       passwordErrors[field] = validateField(field, formData[field]);
     });
 
-    if (Object.values(passwordErrors).some(error => error !== '')) {
-      setErrors(prev => ({ ...prev, ...passwordErrors }));
+    if (Object.values(passwordErrors).some((error) => error !== '')) {
+      setErrors((prev) => ({ ...prev, ...passwordErrors }));
       return;
     }
 
     setIsLoading(true);
     try {
-      const response = await fetch('/api/users/change-password', {
+      const response = await fetch('http://localhost:4000/storyframestudio/auth/change-password', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${loginData.token}`,
+          Authorization: `Bearer ${loginData?.token}`, // Send token in Authorization header
         },
         body: JSON.stringify({
           currentPassword: formData.currentPassword,
           newPassword: formData.newPassword,
+          email:loginData.user.email
         }),
       });
 
@@ -179,7 +201,7 @@ export const UserProfile = () => {
 
       if (response.ok) {
         toast.success('Password updated successfully!');
-        setFormData(prev => ({
+        setFormData((prev) => ({
           ...prev,
           currentPassword: '',
           newPassword: '',
@@ -195,10 +217,16 @@ export const UserProfile = () => {
     }
   };
 
+  // Handle case when loginData is not available
+  if (!loginData) {
+    return <div>Please log in to view your profile</div>;
+  }
+
   return (
     <div className="max-w-4xl mx-auto p-4 space-y-8">
       <h1 className="text-3xl font-bold text-gray-900">Account Settings</h1>
 
+      {/* Profile Information Form */}
       <div className="bg-white shadow rounded-lg p-6">
         <h2 className="text-xl font-semibold mb-4">Profile Information</h2>
         <form onSubmit={handleProfileUpdate} className="space-y-4">
@@ -209,9 +237,7 @@ export const UserProfile = () => {
               name="firstName"
               value={formData.firstName}
               onChange={handleChange}
-              className={`mt-1 block w-full rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 ${
-                errors.firstName ? 'border-red-300' : 'border-gray-300'
-              }`}
+              className={`mt-1 block w-full rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 ${errors.firstName ? 'border-red-300' : 'border-gray-300'}`}
             />
             {errors.firstName && <p className="mt-1 text-sm text-red-600">{errors.firstName}</p>}
           </div>
@@ -223,9 +249,7 @@ export const UserProfile = () => {
               name="lastName"
               value={formData.lastName}
               onChange={handleChange}
-              className={`mt-1 block w-full rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 ${
-                errors.lastName ? 'border-red-300' : 'border-gray-300'
-              }`}
+              className={`mt-1 block w-full rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 ${errors.lastName ? 'border-red-300' : 'border-gray-300'}`}
             />
             {errors.lastName && <p className="mt-1 text-sm text-red-600">{errors.lastName}</p>}
           </div>
@@ -237,9 +261,7 @@ export const UserProfile = () => {
               name="email"
               value={formData.email}
               onChange={handleChange}
-              className={`mt-1 block w-full rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 ${
-                errors.email ? 'border-red-300' : 'border-gray-300'
-              }`}
+              className={`mt-1 block w-full rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 ${errors.email ? 'border-red-300' : 'border-gray-300'}`}
             />
             {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email}</p>}
           </div>
@@ -254,6 +276,7 @@ export const UserProfile = () => {
         </form>
       </div>
 
+      {/* Change Password Form */}
       <div className="bg-white shadow rounded-lg p-6">
         <h2 className="text-xl font-semibold mb-4">Change Password</h2>
         <form onSubmit={handlePasswordUpdate} className="space-y-4">
@@ -264,9 +287,7 @@ export const UserProfile = () => {
               name="currentPassword"
               value={formData.currentPassword}
               onChange={handleChange}
-              className={`mt-1 block w-full rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 ${
-                errors.currentPassword ? 'border-red-300' : 'border-gray-300'
-              }`}
+              className={`mt-1 block w-full rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 ${errors.currentPassword ? 'border-red-300' : 'border-gray-300'}`}
             />
             {errors.currentPassword && <p className="mt-1 text-sm text-red-600">{errors.currentPassword}</p>}
           </div>
@@ -278,9 +299,7 @@ export const UserProfile = () => {
               name="newPassword"
               value={formData.newPassword}
               onChange={handleChange}
-              className={`mt-1 block w-full rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 ${
-                errors.newPassword ? 'border-red-300' : 'border-gray-300'
-              }`}
+              className={`mt-1 block w-full rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 ${errors.newPassword ? 'border-red-300' : 'border-gray-300'}`}
             />
             {errors.newPassword && <p className="mt-1 text-sm text-red-600">{errors.newPassword}</p>}
           </div>
@@ -292,9 +311,7 @@ export const UserProfile = () => {
               name="confirmPassword"
               value={formData.confirmPassword}
               onChange={handleChange}
-              className={`mt-1 block w-full rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 ${
-                errors.confirmPassword ? 'border-red-300' : 'border-gray-300'
-              }`}
+              className={`mt-1 block w-full rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 ${errors.confirmPassword ? 'border-red-300' : 'border-gray-300'}`}
             />
             {errors.confirmPassword && <p className="mt-1 text-sm text-red-600">{errors.confirmPassword}</p>}
           </div>
@@ -310,4 +327,4 @@ export const UserProfile = () => {
       </div>
     </div>
   );
-}; 
+};
