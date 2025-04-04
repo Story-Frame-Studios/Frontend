@@ -69,7 +69,7 @@ const ApplicationsList = () => {
         setDeletedApplications(response?.data?.deletedApplications || []);
         setFilteredDeletedApplications(response?.data?.deletedApplications || []);
       }
-      messageApi.open({ key, type: 'success', content: 'Deleted applications loaded successfully!', duration: 2 });
+      messageApi.open({ key, type: 'success', content: 'Deleted applications loaded successfully!', duration: 3 });
     } catch (error) {
       messageApi.open({ key, type: 'error', content: 'Failed to load deleted applications: ' + error.message, duration: 2 });
     } finally {
@@ -277,7 +277,6 @@ const ApplicationsList = () => {
             <Select.Option value="interview">Interview</Select.Option>
             <Select.Option value="hired">Hired</Select.Option>
             <Select.Option value="rejected">Rejected</Select.Option>
-            <Select.Option value="withdrawn">Withdrawn</Select.Option>
           </Select>
           <DatePicker.RangePicker
             style={{ width: 250 }}

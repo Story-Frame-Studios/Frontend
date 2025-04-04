@@ -1,5 +1,5 @@
-import { useState, useEffect, useContext } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useState, useEffect, useContext, useCallback } from 'react';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { Card, Descriptions, Button, Space, message, Spin } from 'antd';
 import { LoginContext } from '../ContextProvider/LoginContext';
 import jobService from '../../services/jobService';
@@ -14,26 +14,14 @@ const JobDetails = () => {
   const [hasApplied, setHasApplied] = useState(false);
   const [checkingApplication, setCheckingApplication] = useState(false);
 
-  // Redirect if the user is not a candidate
+  // Redirect if the user is not logged in
   useEffect(() => {
-    if (!loginData?.user || loginData.user.role !== 'candidate') {
-      navigate('/'); // Redirect to home or login page
+    if (!loginData?.user) {
+      navigate('/');
     }
   }, [loginData, navigate]);
 
-  useEffect(() => {
-    if (loginData?.user?.id && loginData?.user?.role === 'candidate') {
-      fetchJobDetails();
-    }
-  }, [id, loginData]);
-
-  useEffect(() => {
-    if (loginData?.user?.id && job) {
-      checkApplicationStatus();
-    }
-  }, [job, loginData]);
-
-  const fetchJobDetails = async () => {
+  const fetchJobDetails = useCallback(async () => {
     setLoading(true);
     try {
       const response = await jobService.getJobDetails(id);
@@ -43,11 +31,16 @@ const JobDetails = () => {
         message.error('No job details found.');
       }
     } catch (error) {
-      message.error('Failed to fetch job details: ' + (error.message || 'Unknown error'));
+      console.error("Job fetch error:", error);
+      message.error(`Error fetching job details: ${error.response?.data?.message || error.message || 'Unknown error'}`);
     } finally {
       setLoading(false);
     }
-  };
+  }, [id]);
+
+  useEffect(() => {
+    fetchJobDetails();
+  }, [fetchJobDetails]);
 
   const checkApplicationStatus = async () => {
     setCheckingApplication(true);
@@ -63,7 +56,39 @@ const JobDetails = () => {
     }
   };
 
-  if (loading) {
+  useEffect(() => {
+    if (loginData?.user?.role === 'candidate' && job && !hasApplied) {
+      checkApplicationStatus();
+    }
+  }, [loginData?.user?.role, job, hasApplied]);
+
+  const renderActionButtons = () => {
+    if (loginData?.user?.role === "candidate") {
+      return checkingApplication ? (
+        <Button loading>Checking...</Button>
+      ) : hasApplied ? (
+        <Link to={`/applications/job/${job.jobId}`}>
+          <Button type="default">View Application</Button>
+        </Link>
+      ) : (
+        <Link to={`/job/${job.jobId}/application/new`}>
+          <Button type="primary">Apply Now</Button>
+        </Link>
+      );
+    }
+
+    if (loginData?.user?.role === "employer") {
+      return (
+        <Link to={`/jobs/edit/${job.jobId}`}>
+          <Button type="default">Edit Job</Button>
+        </Link>
+      );
+    }
+
+    return null;
+  };
+
+  if (loading || !job) {
     return (
       <div className="flex justify-center items-center h-64">
         <Spin size="large" />
@@ -71,28 +96,16 @@ const JobDetails = () => {
     );
   }
 
-  if (!job) return null;
-
   return (
     <div className="container mx-auto p-4">
       <Card
         title={<h1 className="text-2xl font-bold">{job.title}</h1>}
         extra={
           <Space>
-            {checkingApplication ? (
-              <Button loading>Checking...</Button>
-            ) : hasApplied ? (
-              <Link to={`/applications/job/${job.jobId}`}>
-                <Button type="default">View Application</Button>
-              </Link>
-            ) : (
-              <Link to={`/job/${job.jobId}/application/new`}>
-                <Button type="primary">Apply Now</Button>
-              </Link>
-            )}
-            <Link to="/job-opportunities">
-              <Button>Back</Button>
-            </Link>
+            {renderActionButtons()}
+            <Button onClick={() => navigate(loginData?.user?.role === "employer" ? "/jobs" : "/job-opportunities")}>
+              Back
+            </Button>
           </Space>
         }
       >
@@ -101,7 +114,7 @@ const JobDetails = () => {
           <Descriptions.Item label="Description">{job.description}</Descriptions.Item>
           <Descriptions.Item label="Requirements">{job.requirements}</Descriptions.Item>
           <Descriptions.Item label="Salary">
-            {job.salary ? `$${job.salary.toLocaleString()}` : 'Not specified'}
+            {job.salary ? new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(job.salary) : 'Not specified'}
           </Descriptions.Item>
           <Descriptions.Item label="Location">{job.location}</Descriptions.Item>
           <Descriptions.Item label="Job Type">{job.jobType}</Descriptions.Item>

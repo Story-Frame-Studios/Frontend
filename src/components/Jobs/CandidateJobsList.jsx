@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Card, Button, Row, Col, Pagination, Spin, Empty, Tag, message, Select, Input, Slider, Divider } from 'antd';
 import { SearchOutlined, FilterOutlined } from '@ant-design/icons';
 import { LoginContext } from '../ContextProvider/LoginContext';
-import jobService from '../../services/jobService'
+import jobService from '../../services/jobService';
 import applicationService from '../../services/applicationService';
 
 const { Meta } = Card;
@@ -25,14 +25,14 @@ const CandidateJobsList = () => {
   const [jobType, setJobType] = useState('All');
   const [salaryRange, setSalaryRange] = useState([0, 200000]);
   const [searchQuery, setSearchQuery] = useState('');
-  
+
   const location = useLocation();
   const navigate = useNavigate();
 
   // Parse query params on initial load
   useEffect(() => {
     const params = new URLSearchParams(location.search);
-    
+
     // Set initial filter values from URL
     const typeParam = params.get('jobType');
     const minSalaryParam = params.get('minSalary');
@@ -40,7 +40,7 @@ const CandidateJobsList = () => {
     const searchParam = params.get('search');
     const pageParam = params.get('page');
     const pageSizeParam = params.get('pageSize');
-    
+
     if (typeParam) setJobType(typeParam);
     if (minSalaryParam && maxSalaryParam) {
       setSalaryRange([parseInt(minSalaryParam), parseInt(maxSalaryParam)]);
@@ -75,21 +75,22 @@ const CandidateJobsList = () => {
   // Check application status when displayed jobs change
   useEffect(() => {
     if (loginData?.user?.id && displayedJobs.length > 0) {
+      const jobIds = displayedJobs.map(job => job.jobId).join(','); // Create a unique key for the current jobs
       checkApplicationStatus();
     }
-  }, [displayedJobs, loginData]);
+  }, [displayedJobs.map(job => job.jobId).join(','), loginData?.user?.id]);
 
   // Update URL with current filter state
   useEffect(() => {
     const params = new URLSearchParams();
-    
+
     if (jobType !== 'All') params.set('jobType', jobType);
     if (salaryRange[0] > 0) params.set('minSalary', salaryRange[0]);
     if (salaryRange[1] < 200000) params.set('maxSalary', salaryRange[1]);
     if (searchQuery) params.set('search', searchQuery);
     if (currentPage !== 1) params.set('page', currentPage);
     if (pageSize !== 6) params.set('pageSize', pageSize);
-    
+
     const newSearch = params.toString();
     if (location.search !== `?${newSearch}`) {
       navigate({ search: newSearch ? `?${newSearch}` : '' }, { replace: true });
@@ -98,7 +99,7 @@ const CandidateJobsList = () => {
 
   const fetchJobs = async () => {
     setLoading(true);
-    const key = "loading"; 
+    const key = "loading";
 
     // Show loading message
     messageApi.open({ key, type: "loading", content: "Loading Jobs data For You..." });
@@ -107,53 +108,53 @@ const CandidateJobsList = () => {
     await new Promise(resolve => setTimeout(resolve, 1000));
 
     try {
-        const response = await jobService.getAllJobs();
-        console.log(response);
-        
-        const jobs = response.data || [];
-        setAllJobs(jobs);
-        
-        // Initial filtering and pagination
-        const initialFiltered = applyFiltersAndSearch(jobs);
-        setFilteredJobs(initialFiltered);
-        setTotalJobs(initialFiltered.length);
-        
-        const initialPaginated = applyPagination(initialFiltered);
-        setDisplayedJobs(initialPaginated);
+      const response = await jobService.getAllJobs();
+      console.log(response);
 
-        // Update message to success
-        messageApi.open({ key, type: 'success', content: 'Jobs loaded successfully!', duration: 2 });
+      const jobs = response.data || [];
+      setAllJobs(jobs);
+
+      // Initial filtering and pagination
+      const initialFiltered = applyFiltersAndSearch(jobs);
+      setFilteredJobs(initialFiltered);
+      setTotalJobs(initialFiltered.length);
+
+      const initialPaginated = applyPagination(initialFiltered);
+      setDisplayedJobs(initialPaginated);
+
+      // Update message to success
+      messageApi.open({ key, type: 'success', content: 'Jobs loaded successfully!', duration: 2 });
     } catch (error) {
-        // Update message to error
-        messageApi.open({ key, type: 'error', content: 'Failed to load jobs: ' + error.message, duration: 2 });
+      // Update message to error
+      messageApi.open({ key, type: 'error', content: 'Failed to load jobs: ' + error.message, duration: 2 });
     } finally {
-        setLoading(false);
+      setLoading(false);
     }
-};
+  };
 
   const applyFiltersAndSearch = (jobs = allJobs) => {
     let result = [...jobs];
     let filtersApplied = false;
-    
+
     // Apply job type filter
     if (jobType !== 'All') {
       result = result.filter(job => job.jobType === jobType);
       filtersApplied = true;
     }
-    
+
     // Apply salary range filter
     if (salaryRange[0] > 0 || salaryRange[1] < 200000) {
       result = result.filter(job => {
         // Handle salary range format "min-max"
         if (typeof job.salary === 'string' && job.salary.includes('-')) {
           const [minSalary, maxSalary] = job.salary.split('-').map(s => parseInt(s.trim()));
-          
+
           // Check if either min or max salary falls within filter range
           return (minSalary >= salaryRange[0] && minSalary <= salaryRange[1]) ||
-                 (maxSalary >= salaryRange[0] && maxSalary <= salaryRange[1]) ||
-                 (minSalary <= salaryRange[0] && maxSalary >= salaryRange[1]);
+            (maxSalary >= salaryRange[0] && maxSalary <= salaryRange[1]) ||
+            (minSalary <= salaryRange[0] && maxSalary >= salaryRange[1]);
         }
-        
+
         // Handle single number format
         const salary = typeof job.salary === 'string'
           ? parseInt(job.salary.replace(/[^0-9]/g, ''))
@@ -168,11 +169,11 @@ const CandidateJobsList = () => {
       });
       filtersApplied = true;
     }
-    
+
     // Apply search query
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
-      result = result.filter(job => 
+      result = result.filter(job =>
         (job.title && job.title.toLowerCase().includes(query)) ||
         (job.companyName && job.companyName.toLowerCase().includes(query)) ||
         (job.location && job.location.toLowerCase().includes(query)) ||
@@ -180,12 +181,12 @@ const CandidateJobsList = () => {
       );
       filtersApplied = true;
     }
-    
+
     // Only reset to first page when filters are actually applied
     if (filtersApplied) {
       setCurrentPage(1);
     }
-    
+
     return result;
   };
 
@@ -197,17 +198,23 @@ const CandidateJobsList = () => {
 
   const checkApplicationStatus = async () => {
     if (!loginData?.user?.id) return;
-    
+
     const candidateId = loginData.user.id;
     const statusMap = {};
-    
+
     try {
       // Check application status for each job
       for (const job of displayedJobs) {
         const response = await applicationService.checkApplicationExists(job.jobId, candidateId);
-        statusMap[job.jobId] = response.data.exists;
+        console.log(response);
+
+        // Store both the status and the applicationId
+        statusMap[job.jobId] = {
+          hasApplied: response.success,
+          applicationId: response.applicationId, // Assuming the API returns applicationId
+        };
       }
-      
+
       setApplicationStatus(statusMap);
     } catch (error) {
       console.error('Error checking application status:', error);
@@ -254,7 +261,7 @@ const CandidateJobsList = () => {
     <div className="container mx-auto p-4">
       {contextHolder}
       <h1 className="text-2xl font-bold mb-6">Available Job Opportunities</h1>
-      
+
       {/* Search Bar - Top Section */}
       <div className="bg-white p-4 mb-6 rounded shadow">
         <div className="mb-2">Search Jobs</div>
@@ -267,7 +274,7 @@ const CandidateJobsList = () => {
           suffix={<SearchOutlined onClick={handleSearch} style={{ cursor: 'pointer' }} />}
         />
       </div>
-      
+
       {/* Main Content - Two Column Layout */}
       <Row gutter={[24, 24]}>
         {/* Left Column - Filters */}
@@ -275,7 +282,7 @@ const CandidateJobsList = () => {
           <div className="bg-white p-4 rounded shadow sticky top-4">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-medium">Filters</h3>
-              <Button 
+              <Button
                 size="small"
                 onClick={() => {
                   setJobType('All');
@@ -287,15 +294,15 @@ const CandidateJobsList = () => {
                 Clear All
               </Button>
             </div>
-            
+
             <Divider style={{ margin: '12px 0' }} />
-            
+
             {/* Job Type Filter */}
             <div className="mb-6">
               <div className="font-medium mb-2">Job Type</div>
-              <Select 
-                style={{ width: '100%' }} 
-                value={jobType} 
+              <Select
+                style={{ width: '100%' }}
+                value={jobType}
                 onChange={handleJobTypeChange}
               >
                 <Option value="All">All Types</Option>
@@ -303,7 +310,7 @@ const CandidateJobsList = () => {
                 <Option value="Part-Time">Part-Time</Option>
               </Select>
             </div>
-            
+
             {/* Salary Range Filter */}
             <div className="mb-6">
               <div className="font-medium mb-2">Salary Range</div>
@@ -321,9 +328,9 @@ const CandidateJobsList = () => {
                 <span>{formatSalary(salaryRange[1])}</span>
               </div>
             </div>
-            
+
             <Divider style={{ margin: '12px 0' }} />
-            
+
             {/* Filter Status */}
             <div className="text-sm text-gray-600">
               {jobType !== 'All' || salaryRange[0] > 0 || salaryRange[1] < 200000 || searchQuery ? (
@@ -334,7 +341,7 @@ const CandidateJobsList = () => {
             </div>
           </div>
         </Col>
-        
+
         {/* Right Column - Job Listings */}
         <Col xs={24} md={16} lg={18}>
           {loading ? (
@@ -353,14 +360,26 @@ const CandidateJobsList = () => {
                       className="h-full flex flex-col"
                       onClick={() => handleCardClick(job.jobId)}
                       actions={[
-                        applicationStatus[job.jobId] ? (
-                          <Link to={`/applications/getJobDetails/${job.jobId}`}>
-                            <Button type="default">View Application</Button>
-                          </Link>
+                        applicationStatus[job.jobId]?.hasApplied ? (
+                            <Button
+                              type="default"
+                              onClick={(e) => {
+                                e.stopPropagation(); // Stop event propagation
+                                navigate(`/applications/${applicationStatus[job.jobId].applicationId}`);
+                              }}
+                            >
+                              View Application
+                            </Button> 
                         ) : (
-                          <Link to={`/job/${job.jobId}/application/new`}>
-                            <Button type="primary">Apply Now</Button>
-                          </Link>
+                            <Button
+                              type="primary"
+                              onClick={(e) => {
+                                e.stopPropagation(); // Stop event propagation
+                                navigate(`/job/${job.jobId}/application/new`);
+                              }}
+                            >
+                              Apply Now
+                            </Button>
                         )
                       ]}
                     >
@@ -381,7 +400,7 @@ const CandidateJobsList = () => {
                   </Col>
                 ))}
               </Row>
-              
+
               <div className="mt-6 flex justify-center">
                 <Pagination
                   current={currentPage}
